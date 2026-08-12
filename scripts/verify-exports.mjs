@@ -17,6 +17,10 @@
  *      repo.
  *   4. `dist/` contains no bare import at all, and the manifest declares no
  *      dependencies of any kind.
+ *   5. No source maps reached `dist/`. This package already builds without them
+ *      — see `tsconfig.build.json` for why — so the check exists to keep it that
+ *      way: the setting is one word, and the damage shows up in *consumers'*
+ *      test output rather than here.
  */
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import path from "node:path";
@@ -53,7 +57,7 @@ for (const [subpath, value] of Object.entries(pkg.exports ?? {})) {
   subpaths += 1;
 }
 
-// --- 2, 3 & 4. what reached dist/ -------------------------------------------
+// --- 2, 3, 4 & 5. what reached dist/ ----------------------------------------
 
 // `.d.ts` too, not just `.js`: a type-only import of a package the manifest
 // does not declare breaks a consumer's typecheck rather than its bundle, which
@@ -63,6 +67,12 @@ for (const file of walk(path.join(root, "dist"))) {
   const rel = path.relative(root, file);
   if (/\.spec\.(js|d\.ts)$/.test(file)) {
     fail(`spec file shipped to dist: ${rel}`);
+  }
+  if (file.endsWith(".map")) {
+    fail(
+      `source map shipped to dist: ${rel} — its sources are under src/, which ` +
+        `this package does not publish, so it dangles at every consumer`
+    );
   }
   if (!/\.(js|d\.ts)$/.test(file)) continue;
   if (file.endsWith(".js")) modules += 1;
