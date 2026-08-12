@@ -48,10 +48,10 @@
     "prepublishOnly": "npm run check && npm test && npm run verify:exports"
   },
   "devDependencies": {
-    "eslint": "^10.8.0",
+    "eslint": "^10.8.1",
     "prettier": "^3.9.6",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.66.0",
+    "typescript-eslint": "^8.67.0",
     "vitest": "^4.1.10"
   },
   "engines": {
