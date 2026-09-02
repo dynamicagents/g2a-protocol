@@ -45,10 +45,12 @@
     "test:watch": "vitest",
     "verify:exports": "node scripts/verify-exports.mjs",
     "prepack": "npm run build && npm run verify:exports",
-    "prepublishOnly": "npm run check && npm test && npm run verify:exports"
+    "prepublishOnly": "npm run check && npm test && npm run verify:exports",
+    "prepare": "husky"
   },
   "devDependencies": {
     "eslint": "^10.8.1",
+    "husky": "^9.1.7",
     "prettier": "^3.9.6",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.67.0",
