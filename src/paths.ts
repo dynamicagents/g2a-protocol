@@ -1,12 +1,12 @@
 /**
- * The paths a Looping agent serves on, and how a URL is composed from an
- * origin.
+ * The paths a Dynamic Agents agent serves on, and how a URL is composed from
+ * an origin.
  *
  * Only what the A2A spec leaves open is here. `AGENT_CARD_PATH` is **not**: the
  * spec fixes it and `@a2a-js/sdk` exports it, so redeclaring it would create a
  * second source of truth for something already shared. The rule for this
- * package is narrow on purpose — it owns the choices Looping made, and nothing
- * the protocol already decided.
+ * package is narrow on purpose — it owns the choices Dynamic Agents made, and
+ * nothing the protocol already decided.
  */
 
 /**

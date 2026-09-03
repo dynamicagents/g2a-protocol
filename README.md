@@ -1,13 +1,13 @@
-# @loopingai/a2a-protocol
+# @dynamicagents/g2a-protocol
 
-The shared source of truth for Looping's A2A wire contract, so gateways and
-agents can't drift apart on claim names or audience derivation.
+The shared source of truth for the Dynamic Agents A2A wire contract, so gateways
+and agents can't drift apart on claim names or audience derivation.
 
 Zero dependencies. No cryptography, no runtime, no I/O — names and pure string
 rules only.
 
 ```bash
-npm install @loopingai/a2a-protocol
+npm install @dynamicagents/g2a-protocol
 ```
 
 ```ts
@@ -17,7 +17,7 @@ import {
   gatewayTokenClaims,
   jwksUrl,
   readTenantClaim
-} from "@loopingai/a2a-protocol";
+} from "@dynamicagents/g2a-protocol";
 
 // Issuing side
 const token = await new SignJWT(gatewayTokenClaims(identity, "reactive"))
@@ -40,8 +40,8 @@ const tenant = readTenantClaim(payload);
 
 The two sides of this contract cannot share code any other way.
 
-`@loopingai/core` is the agent runtime. A gateway is not an agent and must not
-import it — that is a security and architecture rule, not a packaging
+`@dynamicagents/core` is the agent runtime. A gateway is not an agent and must
+not import it — that is a security and architecture rule, not a packaging
 preference. So the contract lived as a comment in each repo saying _must match
 the other_, and it failed exactly as that always does: one side moved to the
 `loopingai.org` claim namespace while the other kept minting
@@ -55,7 +55,7 @@ depending on it commits a consumer to nothing at all.
 
 ## What belongs here
 
-Only the choices **Looping** made where the A2A spec left room.
+Only the choices **Dynamic Agents** made where the A2A spec left room.
 
 | Value                            | Why it is ours to define                         |
 | -------------------------------- | ------------------------------------------------ |
@@ -81,11 +81,11 @@ be a second one of. If the SDK ever exports it, ours should go.
 
 **What either side enforces** stays with that side. The zero-trust verification
 chain — `jku` present → origin allowlist → `iss` origin matches `jku` origin →
-`jwtVerify` pinned to EdDSA — lives in `@loopingai/core`, and the mirror-image
-card and endpoint checks live in the gateway. Neither is shared, because they
-are not the same check, and a shared "verify" helper would invite one side to
-use the other's. This package holds names and pure functions; holding nothing
-else is what makes it safe for both to import.
+`jwtVerify` pinned to EdDSA — lives in `@dynamicagents/core`, and the
+mirror-image card and endpoint checks live in the gateway. Neither is shared,
+because they are not the same check, and a shared "verify" helper would invite
+one side to use the other's. This package holds names and pure functions;
+holding nothing else is what makes it safe for both to import.
 
 ## Zero dependencies is enforced, not promised
 
@@ -115,6 +115,12 @@ interoperate across it in either direction, so:
 Patch releases are for documentation and packaging only. If a release changes a
 string, it is not a patch.
 
+**0.3.0 is exactly such a release.** The claim namespace moved from
+`https://loopingai.org/*` to `https://dynamicagents.dev/*`, and the package was
+renamed from `@loopingai/a2a-protocol`. A token minted under the old namespace
+reads as an empty tenant under the new one, so `@dynamicagents/core` and
+`slack-gatekeeper` have to adopt it in the same deploy.
+
 `src/claims.spec.ts` pins every value as a **literal, not a reference** —
 importing a constant and asserting it equals itself tests nothing. Spelling the
 string out means a rename has to be made twice, and the second time is the
@@ -137,4 +143,4 @@ consumer onto a Node the rest of the toolchain does not support.
 
 ## License
 
-GPL-3.0-only.
+Apache-2.0.

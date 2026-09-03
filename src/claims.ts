@@ -1,18 +1,18 @@
 /**
- * The claims and algorithm on a Looping A2A token.
+ * The claims and algorithm on a Dynamic Agents A2A token.
  *
  * The A2A spec (§7.4) says a client must authenticate itself to an agent and
- * leaves the scheme open. Looping's answer is a short-lived EdDSA JWT carrying
- * two namespaced claims. Those names are the wire: they are not configuration,
- * not derived, and not discoverable — the issuer writes them and the verifier
- * reads them, and there is no negotiation step in between where a mismatch
- * could be detected.
+ * leaves the scheme open. Dynamic Agents' answer is a short-lived EdDSA JWT
+ * carrying two namespaced claims. Those names are the wire: they are not
+ * configuration, not derived, and not discoverable — the issuer writes them and
+ * the verifier reads them, and there is no negotiation step in between where a
+ * mismatch could be detected.
  */
 
 /**
- * The JWS algorithm for every signature in the Looping A2A wire — the gateway
- * identity token, the AgentCard signature, and the push-notification callback
- * JWT alike.
+ * The JWS algorithm for every signature in the Dynamic Agents A2A wire — the
+ * gateway identity token, the AgentCard signature, and the push-notification
+ * callback JWT alike.
  *
  * A single value rather than a list, deliberately. Verifiers pin `algorithms:
  * [A2A_JWS_ALG]`, which is what makes algorithm confusion (`alg: "none"`, or an
@@ -29,7 +29,7 @@ export const A2A_JWS_ALG = "EdDSA";
  * namespace with every registered claim and every other issuer's, so a bare
  * `identity` is a collision waiting to happen.
  */
-export const IDENTITY_CLAIM = "https://loopingai.org/identity";
+export const IDENTITY_CLAIM = "https://dynamicagents.dev/identity";
 
 /**
  * Namespaced claim naming the **tenant** the token authorizes — which of the
@@ -49,8 +49,12 @@ export const IDENTITY_CLAIM = "https://loopingai.org/identity";
  * the other; the verifier read an empty tenant, compared it to the tenant the
  * body addressed, and **every request 401'd**. Neither repo's build noticed,
  * because each side was internally consistent.
+ *
+ * The namespace moved off `loopingai.org` to `dynamicagents.dev` in 0.3.0 — the
+ * same class of change, made deliberately this time, which is why every
+ * consumer has to ship it in the same deploy.
  */
-export const TENANT_CLAIM = "https://loopingai.org/tenant";
+export const TENANT_CLAIM = "https://dynamicagents.dev/tenant";
 
 /**
  * The caller identity as an **issuer mints it** — every field known and

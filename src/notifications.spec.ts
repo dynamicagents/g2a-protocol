@@ -4,8 +4,8 @@ import { NOTIFICATION_TOKEN_HEADER } from "./notifications.js";
 describe("the push-notification token header", () => {
   it("is the name both ends of the callback spell", () => {
     // A literal, not a reference — see claims.spec.ts. This one was declared
-    // twice, in `@loopingai/core` and in looping-gateway, each with a comment
-    // saying it had to match the other.
+    // twice, in `@dynamicagents/core` and in slack-gatekeeper, each with a
+    // comment saying it had to match the other.
     expect(NOTIFICATION_TOKEN_HEADER).toBe("x-a2a-notification-token");
   });
 

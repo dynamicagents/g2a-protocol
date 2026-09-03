@@ -1,11 +1,12 @@
-# AGENTS.md — working in `looping-a2a-protocol`
+# AGENTS.md — working in `g2a-protocol`
 
 This package is **a handful of constants and four pure functions**. That is not
 an accident or a stage it will grow out of; it is the specification. If a change
 here needs a paragraph to justify its size, it belongs in a consumer.
 
-Two services that must never share a runtime — `@loopingai/core` (the agent
-runtime) and `looping-gateway` (which must not import it) — both depend on this.
+Two services that must never share a runtime — `@dynamicagents/core` (the agent
+runtime) and `slack-gatekeeper` (which must not import it) — both depend on
+this.
 That is only safe while depending on it costs nothing. Every rule below follows
 from that one fact.
 
@@ -106,12 +107,12 @@ consumer instead.
 
 ## Consumers
 
-| repo              | depends on this for                                       |
-| ----------------- | --------------------------------------------------------- |
-| `looping-core`    | verifying inbound tokens; re-exported from `/a2a`         |
-| `looping-gateway` | minting outbound tokens, and its `/.well-known/jwks.json` |
+| repo               | depends on this for                                       |
+| ------------------ | --------------------------------------------------------- |
+| `core`             | verifying inbound tokens; re-exported from `/a2a`         |
+| `slack-gatekeeper` | minting outbound tokens, and its `/.well-known/jwks.json` |
 
-`looping-core` re-exports these names from `@loopingai/core/a2a` so agents built
-on it never install this package directly. The gateway depends on it directly,
+`core` re-exports these names from `@dynamicagents/core/a2a` so agents built on
+it never install this package directly. The gateway depends on it directly,
 which is the arrangement that lets it share the contract while importing none of
 the agent runtime.

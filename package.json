@@ -1,7 +1,7 @@
 {
-  "name": "@loopingai/a2a-protocol",
-  "version": "0.2.1",
-  "description": "Zero-dependency wire contract for Looping's A2A authentication: the claim names, well-known paths, and audience rule shared by token issuers and agent runtimes.",
+  "name": "@dynamicagents/g2a-protocol",
+  "version": "0.3.0",
+  "description": "Zero-dependency wire contract for Dynamic Agents' A2A authentication: the claim names, well-known paths, and audience rule shared by token issuers and agent runtimes.",
   "keywords": [
     "a2a",
     "agent2agent",
@@ -12,15 +12,15 @@
     "eddsa",
     "zero-trust"
   ],
-  "license": "GPL-3.0-only",
-  "author": "Looping AI",
-  "homepage": "https://github.com/Looping-AI/looping-a2a-protocol#readme",
+  "license": "Apache-2.0",
+  "author": "Dynamic Agents",
+  "homepage": "https://github.com/dynamicagents/g2a-protocol#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Looping-AI/looping-a2a-protocol.git"
+    "url": "git+https://github.com/dynamicagents/g2a-protocol.git"
   },
   "bugs": {
-    "url": "https://github.com/Looping-AI/looping-a2a-protocol/issues"
+    "url": "https://github.com/dynamicagents/g2a-protocol/issues"
   },
   "type": "module",
   "sideEffects": false,

@@ -2,13 +2,13 @@
 /**
  * Publish gate: the checks that only fail at a consumer.
  *
- * Check 4 is the one this package exists for. `@loopingai/core` is the agent
- * runtime and a gateway must not import it, so the two sides of the A2A wire
- * contract can only share code through something that commits its consumers to
- * nothing. "Zero dependencies" is therefore not a preference — it is the
- * property that makes the package safe for both to depend on, and a promise in
- * a README is not a mechanism. One `import { X } from "jose"` and the reason to
- * have split this out is gone, silently, in a patch release.
+ * Check 4 is the one this package exists for. `@dynamicagents/core` is the
+ * agent runtime and a gateway must not import it, so the two sides of the A2A
+ * wire contract can only share code through something that commits its
+ * consumers to nothing. "Zero dependencies" is therefore not a preference — it
+ * is the property that makes the package safe for both to depend on, and a
+ * promise in a README is not a mechanism. One `import { X } from "jose"` and
+ * the reason to have split this out is gone, silently, in a patch release.
  *
  *   1. Every `exports` subpath resolves to a file that actually emitted.
  *   2. No relative import in `dist/` omits its `.js` extension (Node ESM throws

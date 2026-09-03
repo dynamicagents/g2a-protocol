@@ -13,7 +13,7 @@
  * `taskPushNotificationConfig`, echoed verbatim on the callback so the issuer
  * can correlate it to the pending task it created.
  *
- * ## Why this is here, when the other values are Looping's choices
+ * ## Why this is here, when the other values are Dynamic Agents' choices
  *
  * It is not one. `@a2a-js/sdk` uses `X-A2A-Notification-Token` as the default
  * `tokenHeaderName` in `DefaultPushNotificationSender`, so the name comes from
@@ -36,8 +36,8 @@
  * Spelled lowercase, while the SDK's default is `X-A2A-Notification-Token`.
  * That is not a discrepancy: HTTP field names are case-insensitive (RFC 9110
  * §5.1), `Headers` normalizes on both set and get, and HTTP/2 requires
- * lowercase on the wire regardless. Lowercase is what both Looping repos have
- * always sent and read, so adopting it here changes no bytes.
+ * lowercase on the wire regardless. Lowercase is what both consumer repos
+ * have always sent and read, so adopting it here changes no bytes.
  *
  * ## Lifetime
  *
