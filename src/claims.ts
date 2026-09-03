@@ -11,7 +11,7 @@
 
 /**
  * The JWS algorithm for every signature in the Dynamic Agents A2A wire — the
- * gateway identity token, the AgentCard signature, and the push-notification
+ * gatekeeper identity token, the AgentCard signature, and the push-notification
  * callback JWT alike.
  *
  * A single value rather than a list, deliberately. Verifiers pin `algorithms:
@@ -60,7 +60,7 @@ export const TENANT_CLAIM = "https://dynamicagents.dev/tenant";
  * The caller identity as an **issuer mints it** — every field known and
  * present.
  *
- * This is the gateway-agent instance that dispatched the call, not the human
+ * This is the gatekeeper-agent instance that dispatched the call, not the human
  * end user. Any end user travels unverified, inline in the message text: the
  * issuer deliberately excludes it from the signed claim so a remote agent
  * cannot read the full caller auth context.
@@ -90,7 +90,7 @@ export interface RemoteIdentity {
  * trip sound. `claims.spec.ts` asserts that at the type level, so adding a
  * required field to one side fails a test instead of a deployment.
  */
-export interface GatewayIdentity {
+export interface GatekeeperIdentity {
   /** Canonical instance key, e.g. `remote:7:analytics`. */
   key?: string;
   /** Registry name of the logical agent instance. */
@@ -106,7 +106,10 @@ export interface GatewayIdentity {
  * payload. Registered claims (`iss`, `aud`, `sub`, `exp`, …) are the signer's
  * business and are not described here.
  */
-export type GatewayTokenClaims = Record<typeof IDENTITY_CLAIM, RemoteIdentity> &
+export type GatekeeperTokenClaims = Record<
+  typeof IDENTITY_CLAIM,
+  RemoteIdentity
+> &
   Record<typeof TENANT_CLAIM, string>;
 
 /**
@@ -117,10 +120,10 @@ export type GatewayTokenClaims = Record<typeof IDENTITY_CLAIM, RemoteIdentity> &
  * claim keys are spelled by the package that owns them rather than by each
  * caller.
  */
-export function gatewayTokenClaims(
+export function gatekeeperTokenClaims(
   identity: RemoteIdentity,
   tenant: string
-): GatewayTokenClaims {
+): GatekeeperTokenClaims {
   return {
     [IDENTITY_CLAIM]: identity,
     [TENANT_CLAIM]: tenant
@@ -138,16 +141,16 @@ export function gatewayTokenClaims(
 export function readIdentityClaim(
   payload: Record<string, unknown>,
   claim: string = IDENTITY_CLAIM
-): GatewayIdentity {
+): GatekeeperIdentity {
   const value = payload[claim];
   // `typeof value === "object"` alone admits `null` and arrays. Both would be
-  // returned typed as a `GatewayIdentity` that is not one — harmless at the
+  // returned typed as a `GatekeeperIdentity` that is not one — harmless at the
   // `.key` lookup that follows, since it reads `undefined` either way and the
   // caller rejects, but a lie to anything that spreads or enumerates it. This
   // package is the shared definition of the shape; returning a value that does
   // not have it is the one thing it must not do.
   return typeof value === "object" && value !== null && !Array.isArray(value)
-    ? (value as GatewayIdentity)
+    ? (value as GatekeeperIdentity)
     : {};
 }
 

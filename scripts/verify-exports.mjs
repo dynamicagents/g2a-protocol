@@ -3,8 +3,8 @@
  * Publish gate: the checks that only fail at a consumer.
  *
  * Check 4 is the one this package exists for. `@dynamicagents/core` is the
- * agent runtime and a gateway must not import it, so the two sides of the A2A
- * wire contract can only share code through something that commits its
+ * agent runtime and a gatekeeper must not import it, so the two sides of the
+ * A2A wire contract can only share code through something that commits its
  * consumers to nothing. "Zero dependencies" is therefore not a preference — it
  * is the property that makes the package safe for both to depend on, and a
  * promise in a README is not a mechanism. One `import { X } from "jose"` and
@@ -87,7 +87,7 @@ for (const file of walk(path.join(root, "dist"))) {
     } else {
       fail(
         `${rel} imports "${spec}" — this package must have no dependencies, ` +
-          `so that a gateway can depend on it without importing an agent runtime`
+          `so that a gatekeeper can depend on it without importing an agent runtime`
       );
     }
   }
