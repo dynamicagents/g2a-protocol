@@ -1,14 +1,26 @@
 /**
- * `@loopingai/a2a-protocol` — the Looping A2A wire contract.
+ * `@dynamicagents/g2a-protocol` — the Dynamic Agents gatekeeper-to-agent wire
+ * contract.
  *
  * The claim names, well-known paths, and audience rule that a token issuer and
  * an agent runtime must agree on, with **no runtime and no cryptography**.
  *
+ * ## Why `g2a`
+ *
+ * Gatekeeper-to-agent. Agents never call each other directly; every call that
+ * leaves an agent goes through a gatekeeper, so that anything an agent does
+ * beyond its own boundary stays observable to a human. Subagents are not that
+ * — they run inside one agent's boundary and never reach this protocol.
+ *
+ * The link itself is still A2A: this package adds only the authentication
+ * choices the spec leaves open (§7.4). `g2a` is who may talk to whom; `a2a` is
+ * how they talk.
+ *
  * ## Why this is its own package
  *
  * The two sides of this contract cannot share code any other way.
- * `@loopingai/core` is the agent runtime; a gateway is not an agent and must
- * not import it. So the contract lived as a comment in each repo saying "must
+ * `@dynamicagents/core` is the agent runtime; a gatekeeper is not an agent and
+ * must not import it. So the contract lived as a comment in each repo saying "must
  * match the other," which failed exactly as that always does: one side moved to
  * the `loopingai.org` claim namespace, the other kept minting
  * `https://looping.ai/tenant`, the verifier read an empty tenant, and every
@@ -19,12 +31,13 @@
  * nothing. It has no dependencies, imports no module — not `jose`, not
  * `@a2a-js/sdk`, not `node:*` — and touches no global but `URL`. That is
  * enforced at publish time by `npm run verify:exports`, not by convention:
- * a bare import anywhere in `dist/` fails the build. It is what lets a gateway
- * depend on this while still importing nothing of the agent runtime.
+ * a bare import anywhere in `dist/` fails the build. It is what lets a
+ * gatekeeper depend on this while still importing nothing of the agent
+ * runtime.
  *
  * ## What belongs here
  *
- * Only the choices **Looping** made where the A2A spec left room:
+ * Only the choices **Dynamic Agents** made where the A2A spec left room:
  *
  * | | |
  * |---|---|
@@ -45,9 +58,9 @@
  * reference has no source of truth to be a second one of.
  *
  * Anything either side *enforces* stays with that side: the zero-trust
- * verification checks live in `@loopingai/core`, the card and endpoint checks
- * live in the gateway. This package holds names and pure string rules, and
- * holding nothing else is what keeps it safe for both to import.
+ * verification checks live in `@dynamicagents/core`, the card and endpoint
+ * checks live in the gatekeeper. This package holds names and pure string
+ * rules, and holding nothing else is what keeps it safe for both to import.
  *
  * ## Changing it
  *
@@ -56,17 +69,21 @@
  * minor version is the signal — npm reads `^0.1.0` as `0.1.x` only, so a minor
  * bump is a break no consumer picks up by accident. **Bump it, and ship both
  * consumers together.**
+ *
+ * 0.3.0 did exactly that: the claim namespace moved to `dynamicagents.dev` and
+ * the package was renamed, so `@dynamicagents/core` and `slack-gatekeeper` must
+ * pick it up in the same deploy.
  */
 
 export {
   A2A_JWS_ALG,
   IDENTITY_CLAIM,
   TENANT_CLAIM,
-  gatewayTokenClaims,
+  gatekeeperTokenClaims,
   readIdentityClaim,
   readTenantClaim,
-  type GatewayIdentity,
-  type GatewayTokenClaims,
+  type GatekeeperIdentity,
+  type GatekeeperTokenClaims,
   type RemoteIdentity
 } from "./claims.js";
 

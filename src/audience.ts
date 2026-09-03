@@ -1,9 +1,9 @@
 /**
  * How a token's audience is derived from an agent's endpoint.
  *
- * The A2A spec does not say what `aud` should be. Looping's answer is the
- * agent's exact endpoint — origin **and** path — and both ends derive it with
- * the function below rather than by agreeing on a convention.
+ * The A2A spec does not say what `aud` should be. Dynamic Agents' answer is
+ * the agent's exact endpoint — origin **and** path — and both ends derive it
+ * with the function below rather than by agreeing on a convention.
  */
 
 /**

@@ -50,9 +50,9 @@ export default tseslint.config(
             {
               regex: "^(?!\\.\\.?/)(?!vitest$).+",
               message:
-                "@loopingai/a2a-protocol has no dependencies — a bare import " +
-                "here would make every consumer install one. See README.md, " +
-                "'Zero dependencies is enforced, not promised'."
+                "@dynamicagents/g2a-protocol has no dependencies — a bare " +
+                "import here would make every consumer install one. See " +
+                "README.md, 'Zero dependencies is enforced, not promised'."
             }
           ]
         }

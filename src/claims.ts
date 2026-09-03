@@ -1,18 +1,18 @@
 /**
- * The claims and algorithm on a Looping A2A token.
+ * The claims and algorithm on a Dynamic Agents A2A token.
  *
  * The A2A spec (§7.4) says a client must authenticate itself to an agent and
- * leaves the scheme open. Looping's answer is a short-lived EdDSA JWT carrying
- * two namespaced claims. Those names are the wire: they are not configuration,
- * not derived, and not discoverable — the issuer writes them and the verifier
- * reads them, and there is no negotiation step in between where a mismatch
- * could be detected.
+ * leaves the scheme open. Dynamic Agents' answer is a short-lived EdDSA JWT
+ * carrying two namespaced claims. Those names are the wire: they are not
+ * configuration, not derived, and not discoverable — the issuer writes them and
+ * the verifier reads them, and there is no negotiation step in between where a
+ * mismatch could be detected.
  */
 
 /**
- * The JWS algorithm for every signature in the Looping A2A wire — the gateway
- * identity token, the AgentCard signature, and the push-notification callback
- * JWT alike.
+ * The JWS algorithm for every signature in the Dynamic Agents A2A wire — the
+ * gatekeeper identity token, the AgentCard signature, and the push-notification
+ * callback JWT alike.
  *
  * A single value rather than a list, deliberately. Verifiers pin `algorithms:
  * [A2A_JWS_ALG]`, which is what makes algorithm confusion (`alg: "none"`, or an
@@ -29,7 +29,7 @@ export const A2A_JWS_ALG = "EdDSA";
  * namespace with every registered claim and every other issuer's, so a bare
  * `identity` is a collision waiting to happen.
  */
-export const IDENTITY_CLAIM = "https://loopingai.org/identity";
+export const IDENTITY_CLAIM = "https://dynamicagents.dev/identity";
 
 /**
  * Namespaced claim naming the **tenant** the token authorizes — which of the
@@ -49,14 +49,18 @@ export const IDENTITY_CLAIM = "https://loopingai.org/identity";
  * the other; the verifier read an empty tenant, compared it to the tenant the
  * body addressed, and **every request 401'd**. Neither repo's build noticed,
  * because each side was internally consistent.
+ *
+ * The namespace moved off `loopingai.org` to `dynamicagents.dev` in 0.3.0 — the
+ * same class of change, made deliberately this time, which is why every
+ * consumer has to ship it in the same deploy.
  */
-export const TENANT_CLAIM = "https://loopingai.org/tenant";
+export const TENANT_CLAIM = "https://dynamicagents.dev/tenant";
 
 /**
  * The caller identity as an **issuer mints it** — every field known and
  * present.
  *
- * This is the gateway-agent instance that dispatched the call, not the human
+ * This is the gatekeeper-agent instance that dispatched the call, not the human
  * end user. Any end user travels unverified, inline in the message text: the
  * issuer deliberately excludes it from the signed claim so a remote agent
  * cannot read the full caller auth context.
@@ -86,7 +90,7 @@ export interface RemoteIdentity {
  * trip sound. `claims.spec.ts` asserts that at the type level, so adding a
  * required field to one side fails a test instead of a deployment.
  */
-export interface GatewayIdentity {
+export interface GatekeeperIdentity {
   /** Canonical instance key, e.g. `remote:7:analytics`. */
   key?: string;
   /** Registry name of the logical agent instance. */
@@ -102,7 +106,10 @@ export interface GatewayIdentity {
  * payload. Registered claims (`iss`, `aud`, `sub`, `exp`, …) are the signer's
  * business and are not described here.
  */
-export type GatewayTokenClaims = Record<typeof IDENTITY_CLAIM, RemoteIdentity> &
+export type GatekeeperTokenClaims = Record<
+  typeof IDENTITY_CLAIM,
+  RemoteIdentity
+> &
   Record<typeof TENANT_CLAIM, string>;
 
 /**
@@ -113,10 +120,10 @@ export type GatewayTokenClaims = Record<typeof IDENTITY_CLAIM, RemoteIdentity> &
  * claim keys are spelled by the package that owns them rather than by each
  * caller.
  */
-export function gatewayTokenClaims(
+export function gatekeeperTokenClaims(
   identity: RemoteIdentity,
   tenant: string
-): GatewayTokenClaims {
+): GatekeeperTokenClaims {
   return {
     [IDENTITY_CLAIM]: identity,
     [TENANT_CLAIM]: tenant
@@ -134,16 +141,16 @@ export function gatewayTokenClaims(
 export function readIdentityClaim(
   payload: Record<string, unknown>,
   claim: string = IDENTITY_CLAIM
-): GatewayIdentity {
+): GatekeeperIdentity {
   const value = payload[claim];
   // `typeof value === "object"` alone admits `null` and arrays. Both would be
-  // returned typed as a `GatewayIdentity` that is not one — harmless at the
+  // returned typed as a `GatekeeperIdentity` that is not one — harmless at the
   // `.key` lookup that follows, since it reads `undefined` either way and the
   // caller rejects, but a lie to anything that spreads or enumerates it. This
   // package is the shared definition of the shape; returning a value that does
   // not have it is the one thing it must not do.
   return typeof value === "object" && value !== null && !Array.isArray(value)
-    ? (value as GatewayIdentity)
+    ? (value as GatekeeperIdentity)
     : {};
 }
 

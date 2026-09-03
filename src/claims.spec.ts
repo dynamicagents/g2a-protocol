@@ -3,10 +3,10 @@ import {
   A2A_JWS_ALG,
   IDENTITY_CLAIM,
   TENANT_CLAIM,
-  gatewayTokenClaims,
+  gatekeeperTokenClaims,
   readIdentityClaim,
   readTenantClaim,
-  type GatewayIdentity,
+  type GatekeeperIdentity,
   type RemoteIdentity
 } from "./claims.js";
 
@@ -23,23 +23,28 @@ import {
  */
 
 describe("claim names", () => {
-  it("carries the caller identity under the Looping namespace", () => {
-    expect(IDENTITY_CLAIM).toBe("https://loopingai.org/identity");
+  it("carries the caller identity under the Dynamic Agents namespace", () => {
+    expect(IDENTITY_CLAIM).toBe("https://dynamicagents.dev/identity");
   });
 
-  it("carries the authorized tenant under the Looping namespace", () => {
-    expect(TENANT_CLAIM).toBe("https://loopingai.org/tenant");
+  it("carries the authorized tenant under the Dynamic Agents namespace", () => {
+    expect(TENANT_CLAIM).toBe("https://dynamicagents.dev/tenant");
   });
 
-  it("uses loopingai.org, not looping.ai", () => {
+  it("uses dynamicagents.dev, and no longer loopingai.org", () => {
     // The exact drift that produced this package: one side minted
     // `https://looping.ai/tenant` while the other read
     // `https://loopingai.org/tenant`, so the verifier saw an empty tenant,
     // compared it against the tenant the request body addressed, and refused
-    // every request. Both spellings are plausible; only one is the wire.
+    // every request. Both spellings were plausible; only one was the wire.
+    //
+    // 0.3.0 moved the namespace off that host deliberately. A claim still
+    // carrying either old spelling is a half-finished migration, and this is
+    // where that fails — not in a deployment.
     for (const claim of [IDENTITY_CLAIM, TENANT_CLAIM]) {
-      expect(claim.startsWith("https://loopingai.org/")).toBe(true);
-      expect(claim).not.toContain("looping.ai/");
+      expect(claim.startsWith("https://dynamicagents.dev/")).toBe(true);
+      expect(claim).not.toContain("loopingai.org");
+      expect(claim).not.toContain("looping.ai");
     }
   });
 
@@ -74,13 +79,13 @@ describe("building a token's claims", () => {
   };
 
   it("puts each value under the claim that owns it", () => {
-    const claims = gatewayTokenClaims(identity, "reactive");
-    expect(claims["https://loopingai.org/identity"]).toEqual(identity);
-    expect(claims["https://loopingai.org/tenant"]).toBe("reactive");
+    const claims = gatekeeperTokenClaims(identity, "reactive");
+    expect(claims["https://dynamicagents.dev/identity"]).toEqual(identity);
+    expect(claims["https://dynamicagents.dev/tenant"]).toBe("reactive");
   });
 
   it("round-trips through the readers", () => {
-    const claims = gatewayTokenClaims(identity, "reactive");
+    const claims = gatekeeperTokenClaims(identity, "reactive");
     expect(readIdentityClaim(claims)).toEqual(identity);
     expect(readTenantClaim(claims)).toBe("reactive");
   });
@@ -88,9 +93,9 @@ describe("building a token's claims", () => {
   it("adds nothing else", () => {
     // Registered claims are the signer's business. If this package started
     // setting `exp` or `iss`, two signers would disagree about who owns them.
-    expect(Object.keys(gatewayTokenClaims(identity, "reactive"))).toHaveLength(
-      2
-    );
+    expect(
+      Object.keys(gatekeeperTokenClaims(identity, "reactive"))
+    ).toHaveLength(2);
   });
 });
 
@@ -112,7 +117,7 @@ describe("reading claims off a verified payload", () => {
 
   it("does not mistake an array for an identity", () => {
     // `typeof [] === "object"` and `[] !== null`, so the obvious guard admits
-    // one. It would be returned typed as a `GatewayIdentity` that is not one:
+    // one. It would be returned typed as a `GatekeeperIdentity` that is not one:
     // harmless at the `.key` lookup that follows, and a lie to anything that
     // spreads or enumerates it afterwards.
     const identity = readIdentityClaim({ [IDENTITY_CLAIM]: ["a", "b"] });
@@ -129,7 +134,7 @@ describe("reading claims off a verified payload", () => {
     expect(readTenantClaim({ [TENANT_CLAIM]: "" })).toBe("");
   });
 
-  it("honours an overridden claim name for a non-Looping issuer", () => {
+  it("honours an overridden claim name for a third-party issuer", () => {
     expect(
       readTenantClaim(
         { "https://other.test/tenant": "reactive" },
@@ -143,15 +148,15 @@ describe("the mint and verify shapes", () => {
   it("makes a minted identity assignable to a received one", () => {
     // The asymmetry is deliberate — an issuer knows every field, a verifier
     // trusts none — but the round trip only holds while this assignment does.
-    // Adding a required field to `GatewayIdentity`, or narrowing one of its
+    // Adding a required field to `GatekeeperIdentity`, or narrowing one of its
     // types, breaks it here rather than at a consumer's build.
-    expectTypeOf<RemoteIdentity>().toExtend<GatewayIdentity>();
+    expectTypeOf<RemoteIdentity>().toExtend<GatekeeperIdentity>();
   });
 
   it("makes every received field optional", () => {
-    // `{}` is a valid `GatewayIdentity`: it is whatever the issuer put there,
+    // `{}` is a valid `GatekeeperIdentity`: it is whatever the issuer put there,
     // and a signature proves the payload was not altered, never that it was
     // well-formed.
-    expectTypeOf<Record<string, never>>().toExtend<GatewayIdentity>();
+    expectTypeOf<Record<string, never>>().toExtend<GatekeeperIdentity>();
   });
 });

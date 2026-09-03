@@ -1,11 +1,17 @@
-# AGENTS.md — working in `looping-a2a-protocol`
+# AGENTS.md — working in `g2a-protocol`
 
 This package is **a handful of constants and four pure functions**. That is not
 an accident or a stage it will grow out of; it is the specification. If a change
 here needs a paragraph to justify its size, it belongs in a consumer.
 
-Two services that must never share a runtime — `@loopingai/core` (the agent
-runtime) and `looping-gateway` (which must not import it) — both depend on this.
+`g2a` is _gatekeeper-to-agent_: agents never call each other directly, so every
+call leaving an agent crosses a gatekeeper and stays observable to a human.
+Subagents run inside an agent's own boundary and are not this protocol. The
+crossing itself speaks A2A — see README.md, "Why `g2a`".
+
+Two services that must never share a runtime — `@dynamicagents/core` (the agent
+runtime) and `slack-gatekeeper` (which must not import it) — both depend on
+this.
 That is only safe while depending on it costs nothing. Every rule below follows
 from that one fact.
 
@@ -29,7 +35,7 @@ package can _do_ something, one side will reach for the other side's version of
 it, and the boundary that made the split worth doing is gone.
 
 The verification chain stays in core. The card and endpoint checks stay in the
-gateway. They are not the same check and must not be made to look like one.
+gatekeeper. They are not the same check and must not be made to look like one.
 
 **3. Nothing the A2A spec already fixes _and exports_.**
 `AGENT_CARD_PATH`, `A2A_PROTOCOL_VERSION` and `A2A_VERSION_HEADER` come from
@@ -46,9 +52,10 @@ source of truth to be a second one of.** If the SDK ever exports it, delete ours
 
 So the test for whether a value belongs here is two questions:
 
-1. **Must two repos spell it identically?** If not, it is local — the gateway's
-   `A2A_ENDPOINT_PATH` is `/a2a` too, but it is a placeholder for in-process
-   Durable Object cards that nothing on the far side reads, so it stays put.
+1. **Must two repos spell it identically?** If not, it is local — the
+   gatekeeper's `A2A_ENDPOINT_PATH` is `/a2a` too, but it is a placeholder for
+   in-process Durable Object cards that nothing on the far side reads, so it
+   stays put.
 2. **Can they both import it from somewhere that already owns it?** If yes, they
    should, and it does not come here.
 
@@ -106,12 +113,12 @@ consumer instead.
 
 ## Consumers
 
-| repo              | depends on this for                                       |
-| ----------------- | --------------------------------------------------------- |
-| `looping-core`    | verifying inbound tokens; re-exported from `/a2a`         |
-| `looping-gateway` | minting outbound tokens, and its `/.well-known/jwks.json` |
+| repo               | depends on this for                                       |
+| ------------------ | --------------------------------------------------------- |
+| `core`             | verifying inbound tokens; re-exported from `/a2a`         |
+| `slack-gatekeeper` | minting outbound tokens, and its `/.well-known/jwks.json` |
 
-`looping-core` re-exports these names from `@loopingai/core/a2a` so agents built
-on it never install this package directly. The gateway depends on it directly,
+`core` re-exports these names from `@dynamicagents/core/a2a` so agents built on
+it never install this package directly. The gatekeeper depends on it directly,
 which is the arrangement that lets it share the contract while importing none of
 the agent runtime.
