@@ -1,5 +1,5 @@
 /**
- * The paths a Dynamic Agents agent serves on, and how a URL is composed from
+ * The paths a Dynamic Agent serves on, and how a URL is composed from
  * an origin.
  *
  * Only what the A2A spec leaves open is here. `AGENT_CARD_PATH` is **not**: the
