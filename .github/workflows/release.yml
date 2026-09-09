@@ -47,10 +47,7 @@ jobs:
     outputs:
       version: ${{ steps.gate.outputs.version }}
     steps:
-      # Pinned by digest rather than tag: this job holds a credential that can
-      # write to the registry, so a repointed tag would be a way in. The comment
-      # names the tag each digest stood for.
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@v7
         with:
           # `workflow_run` hands us the repository, not the commit that was
           # tested; pin the checkout to the exact sha Test passed on.
@@ -60,7 +57,7 @@ jobs:
           # `.git/config` outlives the step that needed it.
           persist-credentials: false
 
-      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+      - uses: actions/setup-node@v6
         with:
           # One source of truth with local dev; `engines` requires >=24.
           node-version-file: .nvmrc
