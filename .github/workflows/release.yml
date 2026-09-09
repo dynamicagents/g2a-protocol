@@ -14,12 +14,6 @@ on:
 # tags cannot mint one.
 permissions: {}
 
-# Two green mains in quick succession must not race each other into the
-# registry. Never cancelled: a half-finished release is worse than a slow one.
-concurrency:
-  group: release
-  cancel-in-progress: false
-
 jobs:
   publish:
     # `branches: [main]` above filters `workflow_run.head_branch`, which for a
@@ -33,6 +27,16 @@ jobs:
       github.event.workflow_run.event == 'push' &&
       github.event.workflow_run.head_repository.full_name == github.repository &&
       github.event.workflow_run.head_branch == 'main'
+    # Two green mains in quick succession must not race each other into the
+    # registry. On the job rather than the workflow so the group holds actual
+    # publishes: a run the guard above rejects has no business queueing ahead of
+    # one it accepts. `queue: max` is what makes the queue a queue — the default
+    # keeps a single pending run and lets each new arrival cancel the last, so a
+    # version bump waiting its turn would be dropped without ever publishing.
+    concurrency:
+      group: release
+      cancel-in-progress: false
+      queue: max
     # `prepublishOnly` re-runs `check` and the whole suite before the tarball is
     # cut, so this needs Test's budget over again, not the five minutes a tag
     # used to take.
@@ -45,7 +49,11 @@ jobs:
       # line is what replaces NPM_TOKEN.
       id-token: write
     outputs:
+      name: ${{ steps.gate.outputs.name }}
       version: ${{ steps.gate.outputs.version }}
+      # Whether *this* run is the one that published, which is what decides
+      # below whether `head_sha` may be tagged.
+      published: ${{ steps.gate.outputs.publish }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -88,6 +96,7 @@ jobs:
           set -euo pipefail
           name="$(node -p "require('./package.json').name")"
           version="$(node -p "require('./package.json').version")"
+          echo "name=$name" >>"$GITHUB_OUTPUT"
           echo "version=$version" >>"$GITHUB_OUTPUT"
           if [ "$(npm view "$name@$version" version 2>/dev/null || true)" = "$version" ]; then
             echo "$name@$version is already on npm — nothing to publish."
@@ -133,7 +142,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
+          NAME: ${{ needs.publish.outputs.name }}
           VERSION: ${{ needs.publish.outputs.version }}
+          PUBLISHED: ${{ needs.publish.outputs.published }}
           SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
           set -euo pipefail
@@ -141,6 +152,21 @@ jobs:
             echo "$VERSION is already released — nothing to do."
             exit 0
           fi
+          # When this run published, SHA is by construction the commit the
+          # tarball was built from. When it did not, the version reached npm in
+          # some earlier run and SHA is only whatever is on main now — a later
+          # commit that changed no version would be tagged as the source of an
+          # artifact it never produced. npm records the publishing commit as
+          # `gitHead`; make it agree, or stop and let a human cut the tag.
+          if [ "$PUBLISHED" != "true" ]; then
+            head="$(npm view "$NAME@$VERSION" gitHead 2>/dev/null || true)"
+            if [ "$head" != "$SHA" ]; then
+              echo "npm built $NAME@$VERSION from ${head:-an unrecorded commit}, not $SHA." >&2
+              echo "Refusing to tag a commit the registry does not name." >&2
+              exit 1
+            fi
+          fi
+
           gh release create "v$VERSION" \
             --target "$SHA" \
             --title "v$VERSION" \
