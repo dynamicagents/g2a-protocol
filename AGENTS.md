@@ -81,6 +81,10 @@ degraded mode. So:
   metadata does. It is cosmetic — the tarball and the release workflow both read
   `package.json` — but run `npm install` before committing anyway.
 
+  Merging the bump is the release: once Test is green,
+  `.github/workflows/release.yml` publishes to npm over OIDC and only then cuts
+  the tag. There is no separate publish step to forget, and none to take back.
+
 - **Ship both consumers in the same release.** There is no ordering where one
   goes first safely.
 - **Update `src/claims.spec.ts` by hand.** Those assertions are literals, not
