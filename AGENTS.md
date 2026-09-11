@@ -117,10 +117,10 @@ consumer instead.
 
 ## Consumers
 
-| repo               | depends on this for                                       |
-| ------------------ | --------------------------------------------------------- |
-| `core`             | verifying inbound tokens; re-exported from `/a2a`         |
-| `slack-gatekeeper` | minting outbound tokens, and its `/.well-known/jwks.json` |
+| repo               | depends on this for                                                                                             |
+| ------------------ | --------------------------------------------------------------------------------------------------------------- |
+| `core`             | verifying inbound tokens, and the human-in-the-loop parts it asks and reads answers in; re-exported from `/a2a` |
+| `slack-gatekeeper` | minting outbound tokens, its `/.well-known/jwks.json`, and rendering and answering those questions              |
 
 `core` re-exports these names from `@dynamicagents/core/a2a` so agents built on
 it never install this package directly. The gatekeeper depends on it directly,
