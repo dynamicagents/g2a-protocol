@@ -74,6 +74,14 @@ describe("the part shapes", () => {
     }>().toExtend<HitlResponseData>();
   });
 
+  it("refuses an answer that carries neither an option nor text", () => {
+    expectTypeOf<{
+      type: "io.da.hitl.response";
+      requestId: string;
+      answeredBy: string;
+    }>().not.toExtend<HitlResponseData>();
+  });
+
   it("takes an expiry that names only the question", () => {
     expectTypeOf<{
       type: "io.da.hitl.timeout";

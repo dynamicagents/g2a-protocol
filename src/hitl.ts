@@ -50,7 +50,7 @@ export const HITL_REJECT_OPTION_ID = "reject";
 
 /** One answer a person can pick. */
 export interface HitlOption {
-  /** What comes back as {@link HitlResponseData.optionId} when this is picked. */
+  /** What comes back as the answer's `optionId` when this is picked. */
   id: string;
   /** What the person reads. */
   label: string;
@@ -79,17 +79,19 @@ export interface HitlRequestData {
 }
 
 /**
- * The answer, as the `data` of a {@link HITL_RESPONSE_TYPE} part. It carries an
- * `optionId`, a typed `text`, or both — never neither.
+ * The answer, as the `data` of a {@link HITL_RESPONSE_TYPE} part: an `optionId`,
+ * a typed `text`, or both.
+ *
+ * A union rather than two optional fields, because an answer carrying neither
+ * gives the reader nothing to act on, and the type is the cheapest place to
+ * refuse one.
  */
-export interface HitlResponseData {
+export type HitlResponseData = {
   type: typeof HITL_RESPONSE_TYPE;
   requestId: string;
-  optionId?: string;
-  text?: string;
   /** Who answered, in the gatekeeper's own terms. */
   answeredBy: string;
-}
+} & ({ optionId: string; text?: string } | { optionId?: string; text: string });
 
 /** The expiry, as the `data` of a {@link HITL_TIMEOUT_TYPE} part. */
 export interface HitlTimeoutData {
