@@ -1,8 +1,8 @@
 # @dynamicagents/g2a-protocol
 
 The shared source of truth for the Dynamic Agents **gatekeeper-to-agent** wire
-contract, so gatekeepers and agents can't drift apart on claim names or audience
-derivation.
+contract, so gatekeepers and agents can't drift apart on claim names, audience
+derivation, or how a question for a human is carried.
 
 Zero dependencies. No cryptography, no runtime, no I/O — names and pure string
 rules only.
@@ -77,14 +77,15 @@ depending on it commits a consumer to nothing at all.
 
 Only the choices **Dynamic Agents** made where the A2A spec left room.
 
-| Value                            | Why it is ours to define                         |
-| -------------------------------- | ------------------------------------------------ |
-| `IDENTITY_CLAIM`, `TENANT_CLAIM` | the spec leaves client auth open (§7.4)          |
-| `A2A_JWS_ALG` (`EdDSA`)          | the spec permits several; pinning one is ours    |
-| `A2A_RPC_PATH` (`/a2a`)          | the spec lets an agent serve anywhere            |
-| `JWKS_PATH`                      | RFC 8615 convention, not required by A2A         |
-| `audienceFor`                    | the spec does not specify audience derivation    |
-| `NOTIFICATION_TOKEN_HEADER`      | the SDK's default, which the SDK does not export |
+| Value                            | Why it is ours to define                                |
+| -------------------------------- | ------------------------------------------------------- |
+| `IDENTITY_CLAIM`, `TENANT_CLAIM` | the spec leaves client auth open (§7.4)                 |
+| `A2A_JWS_ALG` (`EdDSA`)          | the spec permits several; pinning one is ours           |
+| `A2A_RPC_PATH` (`/a2a`)          | the spec lets an agent serve anywhere                   |
+| `JWKS_PATH`                      | RFC 8615 convention, not required by A2A                |
+| `audienceFor`                    | the spec does not specify audience derivation           |
+| `HITL_*`                         | the spec leaves what a `data` part holds to the parties |
+| `NOTIFICATION_TOKEN_HEADER`      | the SDK's default, which the SDK does not export        |
 
 Two things stay out, and the boundary matters more than the contents.
 

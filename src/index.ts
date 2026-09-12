@@ -2,8 +2,9 @@
  * `@dynamicagents/g2a-protocol` — the Dynamic Agents gatekeeper-to-agent wire
  * contract.
  *
- * The claim names, well-known paths, and audience rule that a token issuer and
- * an agent runtime must agree on, with **no runtime and no cryptography**.
+ * The claim names, well-known paths and audience rule that a token issuer and
+ * an agent runtime must agree on, and the parts a human-in-the-loop question
+ * travels in — with **no runtime and no cryptography**.
  *
  * ## Why `g2a`
  *
@@ -46,6 +47,7 @@
  * | `/a2a` | the spec lets an agent serve anywhere |
  * | `/.well-known/jwks.json` | RFC 8615, but not required by A2A |
  * | `audienceFor` | the spec does not specify audience derivation |
+ * | `HITL_*` | the spec leaves what a `data` part holds to the parties |
  *
  * Anything the protocol itself fixes stays in `@a2a-js/sdk` — `AGENT_CARD_PATH`,
  * `A2A_PROTOCOL_VERSION`, `A2A_VERSION_HEADER` are all exported there, already
@@ -92,3 +94,17 @@ export { A2A_RPC_PATH, JWKS_PATH, endpointUrl, jwksUrl } from "./paths.js";
 export { audienceFor } from "./audience.js";
 
 export { NOTIFICATION_TOKEN_HEADER } from "./notifications.js";
+
+export {
+  HITL_APPROVE_OPTION_ID,
+  HITL_REJECT_OPTION_ID,
+  HITL_REQUEST_KINDS,
+  HITL_REQUEST_TYPE,
+  HITL_RESPONSE_TYPE,
+  HITL_TIMEOUT_TYPE,
+  type HitlOption,
+  type HitlRequestData,
+  type HitlRequestKind,
+  type HitlResponseData,
+  type HitlTimeoutData
+} from "./hitl.js";
