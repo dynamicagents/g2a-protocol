@@ -23,15 +23,27 @@ import {
 
 describe("the part types", () => {
   it("names the question an agent asks", () => {
-    expect(HITL_REQUEST_TYPE).toBe("io.da.hitl.request");
+    expect(HITL_REQUEST_TYPE).toBe("https://dynamicagents.dev/hitl/request");
   });
 
   it("names the answer a gatekeeper sends back", () => {
-    expect(HITL_RESPONSE_TYPE).toBe("io.da.hitl.response");
+    expect(HITL_RESPONSE_TYPE).toBe("https://dynamicagents.dev/hitl/response");
   });
 
   it("names the expiry sent in place of an answer", () => {
-    expect(HITL_TIMEOUT_TYPE).toBe("io.da.hitl.timeout");
+    expect(HITL_TIMEOUT_TYPE).toBe("https://dynamicagents.dev/hitl/timeout");
+  });
+
+  it("keeps every type under a host Dynamic Agents owns", () => {
+    // The rule the spellings above are instances of. An unnamespaced type, or
+    // one under a host somebody else controls, reads to the other side as no
+    // type at all: a question posted as plain text with nothing to click.
+    for (const type of [
+      HITL_REQUEST_TYPE,
+      HITL_RESPONSE_TYPE,
+      HITL_TIMEOUT_TYPE
+    ])
+      expect(type.startsWith("https://dynamicagents.dev/")).toBe(true);
   });
 });
 
@@ -52,7 +64,7 @@ describe("the part shapes", () => {
   // renamed, fails here rather than in the other side's build.
   it("takes an approval that names no options", () => {
     expectTypeOf<{
-      type: "io.da.hitl.request";
+      type: "https://dynamicagents.dev/hitl/request";
       requestId: string;
       requestKind: "approval";
       prompt: string;
@@ -61,13 +73,13 @@ describe("the part shapes", () => {
 
   it("takes an answer picked from the options, and one typed out", () => {
     expectTypeOf<{
-      type: "io.da.hitl.response";
+      type: "https://dynamicagents.dev/hitl/response";
       requestId: string;
       optionId: string;
       answeredBy: string;
     }>().toExtend<HitlResponseData>();
     expectTypeOf<{
-      type: "io.da.hitl.response";
+      type: "https://dynamicagents.dev/hitl/response";
       requestId: string;
       text: string;
       answeredBy: string;
@@ -76,7 +88,7 @@ describe("the part shapes", () => {
 
   it("refuses an answer that carries neither an option nor text", () => {
     expectTypeOf<{
-      type: "io.da.hitl.response";
+      type: "https://dynamicagents.dev/hitl/response";
       requestId: string;
       answeredBy: string;
     }>().not.toExtend<HitlResponseData>();
@@ -84,7 +96,7 @@ describe("the part shapes", () => {
 
   it("takes an expiry that names only the question", () => {
     expectTypeOf<{
-      type: "io.da.hitl.timeout";
+      type: "https://dynamicagents.dev/hitl/timeout";
       requestId: string;
     }>().toExtend<HitlTimeoutData>();
   });

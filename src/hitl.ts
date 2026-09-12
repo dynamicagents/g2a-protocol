@@ -10,22 +10,27 @@
  * saying the same thing in words, so a client that knows none of this still
  * reads something sensible.
  *
+ * Each name is a URI on a host Dynamic Agents owns, the way the claims in
+ * `./claims.ts` are. A `data` part's `type` shares one flat namespace with every
+ * other party's, so a bare word — or a host somebody else controls — is a
+ * collision that surfaces only once two parties disagree about what it holds.
+ *
  * The shapes are declared as types only. Whichever side reads a part validates
  * it, with the schema library that side already carries: a validator here would
  * be behaviour, and a dependency.
  */
 
 /** `data.type` of the part an agent puts on its `input-required` status to ask. */
-export const HITL_REQUEST_TYPE = "io.da.hitl.request";
+export const HITL_REQUEST_TYPE = "https://dynamicagents.dev/hitl/request";
 
 /** `data.type` of the part a gatekeeper sends onto the parked task with the answer. */
-export const HITL_RESPONSE_TYPE = "io.da.hitl.response";
+export const HITL_RESPONSE_TYPE = "https://dynamicagents.dev/hitl/response";
 
 /**
  * `data.type` of the part a gatekeeper sends onto the parked task instead of an
  * answer, once nobody gave one before the question expired.
  */
-export const HITL_TIMEOUT_TYPE = "io.da.hitl.timeout";
+export const HITL_TIMEOUT_TYPE = "https://dynamicagents.dev/hitl/timeout";
 
 /**
  * What is being asked: a yes or no on an action (`approval`), or a pick among
