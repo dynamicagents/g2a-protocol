@@ -22,14 +22,20 @@
  */
 
 /**
- * Maximum **UTF-8 bytes** of the text a single message carries — every text part
- * concatenated, not each one separately.
+ * Maximum **UTF-8 bytes** of the text a single message carries.
  *
- * How it is measured is as much of the agreement as the number: bytes, not
- * characters or UTF-16 code units, and summed across parts. Two sides that agree
- * on 262144 but measure it differently disagree about every message containing
- * anything outside ASCII, and only about those — which is the kind of split that
- * ships.
+ * How it is measured is as much of the agreement as the number, so in full: take
+ * every `text` part in order, concatenate the values with **no separator**, trim
+ * leading and trailing whitespace from the result, and encode that as UTF-8. The
+ * bound is the byte length of the whole, never of any one part.
+ *
+ * Every clause of that is load-bearing, and each fails differently. Count UTF-16
+ * code units instead of bytes and the two sides agree on almost everything —
+ * they part only where the encoded size straddles the bound, which is to say on
+ * the largest messages anyone sends and nowhere else, so the disagreement
+ * arrives already rare and already hard to reproduce. Skip the trim and a sender
+ * refuses a whitespace-padded message the receiver would have taken. Join the
+ * parts with a newline and every multi-part message measures long.
  *
  * Text only. File and data parts are bounded by whatever carries them.
  *
