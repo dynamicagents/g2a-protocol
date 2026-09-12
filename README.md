@@ -85,6 +85,7 @@ Only the choices **Dynamic Agents** made where the A2A spec left room.
 | `JWKS_PATH`                      | RFC 8615 convention, not required by A2A                |
 | `audienceFor`                    | the spec does not specify audience derivation           |
 | `HITL_*`                         | the spec leaves what a `data` part holds to the parties |
+| `MAX_MESSAGE_TEXT_BYTES`         | the spec bounds no message, and both ends must          |
 | `NOTIFICATION_TOKEN_HEADER`      | the SDK's default, which the SDK does not export        |
 
 Two things stay out, and the boundary matters more than the contents.
@@ -135,6 +136,13 @@ interoperate across it in either direction, so:
 
 Patch releases are for documentation and packaging only. If a release changes a
 string, it is not a patch.
+
+**Adding** a value is the one thing that is. A name no consumer spells yet has no
+mismatch to cause, so there is no release where a consumer that ignores it stops
+working — and a patch is what lets both sides pick it up without either editing a
+range. 0.4.1 added `MAX_MESSAGE_TEXT_BYTES` on exactly that basis. The asymmetry
+is deliberate and does not carry forward: once a value is published, changing it
+is a minor like any other.
 
 **0.3.0 is exactly such a release.** The claim namespace moved from
 `https://loopingai.org/*` to `https://dynamicagents.dev/*`, and the package was

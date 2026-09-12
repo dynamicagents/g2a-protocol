@@ -48,6 +48,7 @@
  * | `/.well-known/jwks.json` | RFC 8615, but not required by A2A |
  * | `audienceFor` | the spec does not specify audience derivation |
  * | `HITL_*` | the spec leaves what a `data` part holds to the parties |
+ * | `MAX_MESSAGE_TEXT_BYTES` | the spec bounds no message, and both ends must |
  *
  * Anything the protocol itself fixes stays in `@a2a-js/sdk` — `AGENT_CARD_PATH`,
  * `A2A_PROTOCOL_VERSION`, `A2A_VERSION_HEADER` are all exported there, already
@@ -94,6 +95,8 @@ export { A2A_RPC_PATH, JWKS_PATH, endpointUrl, jwksUrl } from "./paths.js";
 export { audienceFor } from "./audience.js";
 
 export { NOTIFICATION_TOKEN_HEADER } from "./notifications.js";
+
+export { MAX_MESSAGE_TEXT_BYTES } from "./limits.js";
 
 export {
   HITL_APPROVE_OPTION_ID,
