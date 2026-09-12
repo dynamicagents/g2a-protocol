@@ -75,6 +75,13 @@ degraded mode. So:
   range and notice why. Patch releases are for documentation and packaging; if a
   release changes a string, it is not one.
 
+  **Adding a value is a patch**, and only adding. A name no consumer spells yet
+  has no mismatch to cause, so no release of it can break one — and a patch is
+  what lets both sides pick it up without either editing a range, which is the
+  whole reason to prefer one here. `MAX_MESSAGE_TEXT_BYTES` shipped as 0.4.1 on
+  that basis. The exemption is spent on publication: changing it afterwards is a
+  minor like any other value.
+
   Editing `version` or `engines` in `package.json` directly leaves
   `package-lock.json` behind, and **nothing in CI will say so**: `npm ci`
   hard-errors when the _dependencies_ drift, and is silent when the root
