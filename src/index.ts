@@ -4,10 +4,11 @@
  * and an agent runtime must agree on, and the parts a human-in-the-loop
  * question travels in. No runtime, no cryptography, no dependencies.
  *
- * **A change to any value here is a change to the wire** — bump the minor and
- * ship both consumers together. README.md is the full account: why the package
- * exists, what belongs in it, and what changing it costs. AGENTS.md is the
- * working rules for editing it.
+ * **Changing a published value here is a change to the wire** — bump the minor
+ * and ship both consumers together. *Adding* a value is the exception and takes
+ * a patch: a name no consumer spells yet has no mismatch to cause. README.md is
+ * the full account: why the package exists, what belongs in it, and what
+ * changing it costs. AGENTS.md is the working rules for editing it.
  */
 
 export {

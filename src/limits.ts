@@ -6,11 +6,12 @@
  * have a platform size limit. The receiving side refuses text past the bound,
  * which is what makes the bound a value the *sending* side has to know too.
  *
- * Where that bit: a person answers a question the gatekeeper asked on an agent's
- * behalf, the gatekeeper marks the question answered and forwards the text, and
- * the agent refuses it. The question is spent and the answer is nowhere, so
- * there is nothing to retry — the only repair is to ask again. Checked before
- * the answer is accepted, the same text is a sentence asking for a shorter one.
+ * It bites in one specific way: a person answers a question the gatekeeper
+ * asked on an agent's behalf, the gatekeeper marks the question answered and
+ * forwards the text, and the agent refuses it. The question is spent and the
+ * answer is nowhere, so there is nothing to retry — the only repair is to ask
+ * again. Checked before the answer is accepted, the same text is a sentence
+ * asking for a shorter one.
  *
  * It lives here rather than in `./hitl.ts` because the bound is on any message
  * text crossing between a gatekeeper and an agent; a human's answer is one such

@@ -20,9 +20,11 @@
  * a comment saying it had to match the other. If the SDK ever exports it, delete
  * this in favour of that.
  *
- * Spelled lowercase against the SDK's `X-A2A-Notification-Token`, which changes
- * no bytes: HTTP field names are case-insensitive (RFC 9110 §5.1), `Headers`
- * normalizes on set and get, and HTTP/2 requires lowercase on the wire anyway.
+ * Spelled lowercase against the SDK's `X-A2A-Notification-Token`, which is
+ * semantically the same header: field names are case-insensitive (RFC 9110
+ * §5.1) and `Headers` normalizes on set and get; the lowercase spelling is what
+ * HTTP/2 puts on the wire, though an HTTP/1.1 sender may preserve its own
+ * casing.
  *
  * The SDK marks the token-header mechanism `@deprecated` in favour of
  * `pushConfig.authentication`. Holding the spelling in one place is what makes
