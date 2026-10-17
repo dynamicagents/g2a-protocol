@@ -33,15 +33,20 @@ export { MAX_MESSAGE_TEXT_BYTES } from "./limits.js";
 
 export {
   HITL_APPROVE_OPTION_ID,
+  HITL_QUESTION_KINDS,
   HITL_REJECT_OPTION_ID,
-  HITL_REQUEST_KINDS,
   HITL_REQUEST_TYPE,
   HITL_RESPONSE_TYPE,
   HITL_TIMEOUT_TYPE,
+  type HitlAnswer,
+  type HitlApprovalQuestion,
   type HitlArtifact,
+  type HitlChoiceQuestion,
   type HitlOption,
+  type HitlQuestion,
+  type HitlQuestionKind,
   type HitlRequestData,
-  type HitlRequestKind,
   type HitlResponseData,
+  type HitlTextQuestion,
   type HitlTimeoutData
 } from "./hitl.js";
