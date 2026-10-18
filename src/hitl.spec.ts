@@ -1,13 +1,15 @@
 import { describe, it, expect, expectTypeOf } from "vitest";
 import {
   HITL_APPROVE_OPTION_ID,
+  HITL_QUESTION_KINDS,
   HITL_REJECT_OPTION_ID,
-  HITL_REQUEST_KINDS,
   HITL_REQUEST_TYPE,
   HITL_RESPONSE_TYPE,
   HITL_TIMEOUT_TYPE,
+  type HitlAnswer,
+  type HitlQuestion,
+  type HitlQuestionKind,
   type HitlRequestData,
-  type HitlRequestKind,
   type HitlResponseData,
   type HitlTimeoutData
 } from "./hitl.js";
@@ -48,9 +50,11 @@ describe("the part types", () => {
 });
 
 describe("what can be asked", () => {
-  it("asks for an approval or a choice", () => {
-    expect(HITL_REQUEST_KINDS).toEqual(["approval", "choice"]);
-    expectTypeOf<HitlRequestKind>().toEqualTypeOf<"approval" | "choice">();
+  it("asks for a choice, words, or an approval", () => {
+    expect(HITL_QUESTION_KINDS).toEqual(["choice", "text", "approval"]);
+    expectTypeOf<HitlQuestionKind>().toEqualTypeOf<
+      "choice" | "text" | "approval"
+    >();
   });
 
   it("reads an approval's answer by these option ids", () => {
@@ -62,48 +66,80 @@ describe("what can be asked", () => {
 describe("the part shapes", () => {
   // The smallest part of each kind a side sends. A field made required, or
   // renamed, fails here rather than in the other side's build.
-  it("takes an approval that names no options", () => {
+  it("takes a request of several questions, one of each kind", () => {
     expectTypeOf<{
       type: "https://dynamicagents.dev/hitl/request";
       requestId: string;
-      requestKind: "approval";
-      prompt: string;
+      questions: [
+        {
+          kind: "choice";
+          id: string;
+          prompt: string;
+          options: { id: string; label: string }[];
+        },
+        { kind: "text"; id: string; prompt: string },
+        {
+          kind: "approval";
+          id: string;
+          prompt: string;
+          artifact: { id: string; url: string };
+        }
+      ];
     }>().toExtend<HitlRequestData>();
   });
 
-  it("takes an approval of an artifact, which names its id and link", () => {
+  it("takes an option's description and example, and a choice of many", () => {
     expectTypeOf<{
-      type: "https://dynamicagents.dev/hitl/request";
-      requestId: string;
-      requestKind: "approval";
+      kind: "choice";
+      id: string;
       prompt: string;
-      artifact: { id: string; url: string };
-    }>().toExtend<HitlRequestData>();
+      header: string;
+      multiple: true;
+      options: {
+        id: string;
+        label: string;
+        description: string;
+        example: string;
+      }[];
+    }>().toExtend<HitlQuestion>();
+  });
+
+  it("refuses an approval with nothing to look at", () => {
     expectTypeOf<{
-      type: "https://dynamicagents.dev/hitl/request";
-      requestId: string;
-      requestKind: "approval";
+      kind: "approval";
+      id: string;
+      prompt: string;
+    }>().not.toExtend<HitlQuestion>();
+    expectTypeOf<{
+      kind: "approval";
+      id: string;
       prompt: string;
       artifact: { id: string };
-    }>().not.toExtend<HitlRequestData>();
+    }>().not.toExtend<HitlQuestion>();
   });
 
-  it("takes an answer picked from the options, and one typed out", () => {
+  it("takes answers picked, typed, or both, keyed by question", () => {
+    expectTypeOf<{ optionIds: [string] }>().toExtend<HitlAnswer>();
+    expectTypeOf<{ optionIds: [string, string] }>().toExtend<HitlAnswer>();
+    expectTypeOf<{ text: string }>().toExtend<HitlAnswer>();
     expectTypeOf<{
-      type: "https://dynamicagents.dev/hitl/response";
-      requestId: string;
-      optionId: string;
-      answeredBy: string;
-    }>().toExtend<HitlResponseData>();
-    expectTypeOf<{
-      type: "https://dynamicagents.dev/hitl/response";
-      requestId: string;
+      optionIds: [string, ...string[]];
       text: string;
+    }>().toExtend<HitlAnswer>();
+    expectTypeOf<{
+      type: "https://dynamicagents.dev/hitl/response";
+      requestId: string;
       answeredBy: string;
+      answers: Record<string, { optionIds: [string] } | { text: string }>;
     }>().toExtend<HitlResponseData>();
   });
 
   it("refuses an answer that carries neither an option nor text", () => {
+    expectTypeOf<{ optionIds?: undefined }>().not.toExtend<HitlAnswer>();
+    // No option picked is no option, however it is spelled: an empty list,
+    // or a list the type cannot promise is not empty.
+    expectTypeOf<{ optionIds: [] }>().not.toExtend<HitlAnswer>();
+    expectTypeOf<{ optionIds: string[] }>().not.toExtend<HitlAnswer>();
     expectTypeOf<{
       type: "https://dynamicagents.dev/hitl/response";
       requestId: string;
