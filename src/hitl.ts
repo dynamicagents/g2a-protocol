@@ -148,12 +148,12 @@ export interface HitlRequestData {
 /**
  * One question's answer: the option ids picked, typed words, or both.
  *
- * A union rather than two optional fields, because an answer carrying neither
- * gives the reader nothing to act on, and the type is the cheapest place to
- * refuse one. `optionIds` holds at least one id when present.
+ * A union rather than two optional fields, and `optionIds` a tuple of at least
+ * one, because an answer carrying neither gives the reader nothing to act on,
+ * and the type is the cheapest place to refuse one.
  */
 export type HitlAnswer =
-  | { optionIds: string[]; text?: string }
+  | { optionIds: [string, ...string[]]; text?: string }
   | { optionIds?: undefined; text: string };
 
 /**

@@ -119,22 +119,27 @@ describe("the part shapes", () => {
   });
 
   it("takes answers picked, typed, or both, keyed by question", () => {
-    expectTypeOf<{ optionIds: string[] }>().toExtend<HitlAnswer>();
+    expectTypeOf<{ optionIds: [string] }>().toExtend<HitlAnswer>();
+    expectTypeOf<{ optionIds: [string, string] }>().toExtend<HitlAnswer>();
     expectTypeOf<{ text: string }>().toExtend<HitlAnswer>();
     expectTypeOf<{
-      optionIds: string[];
+      optionIds: [string, ...string[]];
       text: string;
     }>().toExtend<HitlAnswer>();
     expectTypeOf<{
       type: "https://dynamicagents.dev/hitl/response";
       requestId: string;
       answeredBy: string;
-      answers: Record<string, { optionIds: string[] } | { text: string }>;
+      answers: Record<string, { optionIds: [string] } | { text: string }>;
     }>().toExtend<HitlResponseData>();
   });
 
   it("refuses an answer that carries neither an option nor text", () => {
     expectTypeOf<{ optionIds?: undefined }>().not.toExtend<HitlAnswer>();
+    // No option picked is no option, however it is spelled: an empty list,
+    // or a list the type cannot promise is not empty.
+    expectTypeOf<{ optionIds: [] }>().not.toExtend<HitlAnswer>();
+    expectTypeOf<{ optionIds: string[] }>().not.toExtend<HitlAnswer>();
     expectTypeOf<{
       type: "https://dynamicagents.dev/hitl/response";
       requestId: string;
