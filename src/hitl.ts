@@ -2,13 +2,22 @@
  * Human in the loop: how an agent asks a person something through its
  * gatekeeper, and how the answer comes back.
  *
- * A2A carries the exchange itself. The agent parks its task in
- * `input-required`, and the answer arrives as a new message on that same task.
- * What A2A leaves open is how either side finds the question or the answer
- * inside those messages — a `data` part holds whatever the two parties agree it
- * holds. These names are that agreement. Each part travels beside a `text` part
- * saying the same thing in words, so a client that knows none of this still
- * reads something sensible.
+ * A2A carries the exchange itself. A question rides a status update of the
+ * task, and its answer arrives as a new message on that same task. A task may
+ * hold several questions open, each answered on its own and matched by
+ * `requestId`, and may ask while it is still `working`: `input-required` says
+ * only that the agent is idle, waiting on the questions it has open. What A2A
+ * leaves open is how either side finds the question or the answer inside those
+ * messages: a `data` part holds whatever the two parties agree it holds. These
+ * names are that agreement. Each part travels beside a `text` part saying the
+ * same thing in words, so a client that knows none of this still reads
+ * something sensible.
+ *
+ * A message on an open task that carries neither an answer nor an expiry part
+ * is the next message of the same conversation: it joins the task, as more
+ * input to the work already running. An agent that takes no such message, or
+ * whose task has closed, refuses it with an A2A error, and the gatekeeper starts
+ * a new task with it instead.
  *
  * Each name is a URI on a host Dynamic Agents owns, the way the claims in
  * `./claims.ts` are. A `data` part's `type` shares one flat namespace with every
@@ -31,14 +40,17 @@
  * be behaviour, and a dependency.
  */
 
-/** `data.type` of the part an agent puts on its `input-required` status to ask. */
+/**
+ * `data.type` of the part an agent puts on a status update of its task to ask,
+ * `working` or `input-required`.
+ */
 export const HITL_REQUEST_TYPE = "https://dynamicagents.dev/hitl/request";
 
-/** `data.type` of the part a gatekeeper sends onto the parked task with the answer. */
+/** `data.type` of the part a gatekeeper sends onto the asking task with the answer. */
 export const HITL_RESPONSE_TYPE = "https://dynamicagents.dev/hitl/response";
 
 /**
- * `data.type` of the part a gatekeeper sends onto the parked task instead of an
+ * `data.type` of the part a gatekeeper sends onto the asking task instead of an
  * answer, once nobody gave one before the question expired.
  */
 export const HITL_TIMEOUT_TYPE = "https://dynamicagents.dev/hitl/timeout";
