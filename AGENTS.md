@@ -133,3 +133,17 @@ consumer instead.
 `core` re-exports these names from `@dynamicagents/core/a2a` so agents built on
 it never install this package directly. The gatekeeper depends on it directly:
 it mints with it for every agent it calls, its own built-ins included.
+
+---
+
+## Copilot reviews a pull request once
+
+Opening a pull request ready for review gets it one Copilot review, requested
+automatically, and that is the only one it gets. A push asks for nothing, and a
+second review happens only when a person requests one by hand.
+
+So **never wait for a second review**: once Copilot's review has landed, answer
+it and hand over, because polling for another waits on something that will not
+come. Never request one either, since every review is billed. The workspace's
+AGENTS.md, under "Pull requests", has how to tell a review has landed and how to
+answer it.
