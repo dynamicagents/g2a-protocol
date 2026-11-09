@@ -90,8 +90,9 @@ degraded mode. So:
   `package.json` — but run `npm install` before committing anyway.
 
   The bump reaching `main` is what ships it: on the first green Test run for a
-  commit carrying that version, `.github/workflows/release.yml` publishes to npm
-  over OIDC and only then cuts the tag. There is no separate publish step to forget, and none to take back.
+  commit carrying that version, `.github/workflows/release.yml` calls the train's
+  release protocol (dev-agents' `.github/workflows/npm-release.yml`), which
+  publishes to npm over OIDC and only then cuts the tag. There is no separate publish step to forget, and none to take back.
 
 - **Ship both consumers in the same release.** There is no ordering where one
   goes first safely.
