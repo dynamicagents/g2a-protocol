@@ -41,10 +41,11 @@
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "format": "prettier --write .",
     "lint": "eslint .",
-    "check": "prettier --check . && eslint . && tsc && npm run build",
+    "check": "npm run devkit:verify && prettier --check . && eslint . && tsc && npm run build",
     "test": "vitest run",
     "test:watch": "vitest",
-    "verify:exports": "node scripts/verify-exports.mjs",
+    "devkit:verify": "node .devkit/verify-devkit.mjs",
+    "verify:exports": "node .devkit/verify-exports.mjs",
     "prepack": "npm run build && npm run verify:exports",
     "prepublishOnly": "npm run check && npm test && npm run verify:exports",
     "prepare": "husky"
