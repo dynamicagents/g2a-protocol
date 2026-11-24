@@ -44,12 +44,13 @@
     "check": "prettier --check . && eslint . && tsc && npm run build",
     "test": "vitest run",
     "test:watch": "vitest",
-    "verify:exports": "node scripts/verify-exports.mjs",
+    "verify:exports": "devkit-verify-exports",
     "prepack": "npm run build && npm run verify:exports",
     "prepublishOnly": "npm run check && npm test && npm run verify:exports",
     "prepare": "husky"
   },
   "devDependencies": {
+    "@dynamicagents/devkit": "^0.1.0",
     "eslint": "^10.10.0",
     "husky": "^9.1.7",
     "prettier": "^3.9.6",

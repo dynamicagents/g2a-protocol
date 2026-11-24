@@ -25,10 +25,11 @@ Not `jose`, not `@a2a-js/sdk`, not `node:*`, not a type-only import. The only
 global the _published_ code touches is `URL`; a spec may reach for `Headers` to
 prove a header name behaves, and specs never ship.
 
-`scripts/verify-exports.mjs` fails the build on any bare import reaching
-`dist/`, and on any `dependencies`, `peerDependencies` or
-`optionalDependencies` key in the manifest — check it before assuming a
-convenience import is fine.
+`npm run verify:exports` fails the build on any bare import reaching `dist/`,
+and on any `dependencies`, `peerDependencies` or `optionalDependencies` key in
+the manifest — check it before assuming a convenience import is fine. The
+checker comes from the `@dynamicagents/devkit` devDependency, and `zeroDependencies` in `devkit.config.mjs` is this
+package asking for it.
 
 **2. No behaviour, only names and pure string rules.**
 Nothing here signs, verifies, fetches, or reads configuration. The moment this
