@@ -1,13 +1,11 @@
 /**
  * What the devkit checkers read here, a section per checker.
  *
- * The checkers themselves are `.devkit/`, vendored from dev-agents'
- * `packages/devkit`; that package's README is the home of what each one fails
- * on and of every key below. This file is only what is this package's.
+ * The checkers themselves are the `@dynamicagents/devkit` devDependency; its
+ * README is the home of what each one fails on and of every key below. This file is only what is this package's.
  *
  * There is no `references` section, so the reference checker is not wired here:
- * `verify:exports` and the copy's own `devkit:verify` are what this package
- * runs.
+ * `verify:exports` is what this package runs.
  */
 export default {
   exports: {

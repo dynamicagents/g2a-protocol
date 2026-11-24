@@ -28,8 +28,7 @@ prove a header name behaves, and specs never ship.
 `npm run verify:exports` fails the build on any bare import reaching `dist/`,
 and on any `dependencies`, `peerDependencies` or `optionalDependencies` key in
 the manifest — check it before assuming a convenience import is fine. The
-checker is the devkit's, vendored into `.devkit/` from dev-agents'
-`packages/devkit`, and `zeroDependencies` in `devkit.config.mjs` is this
+checker comes from the `@dynamicagents/devkit` devDependency, and `zeroDependencies` in `devkit.config.mjs` is this
 package asking for it.
 
 **2. No behaviour, only names and pure string rules.**
@@ -108,7 +107,7 @@ degraded mode. So:
 ## Working here
 
 ```bash
-npm run check              # devkit copy, prettier, eslint, tsc, build
+npm run check              # prettier, eslint, tsc, build
 npm test                   # vitest
 npm run verify:exports     # the publish gate — read it before changing it
 ```
