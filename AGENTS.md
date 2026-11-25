@@ -4,6 +4,15 @@ This package is **a handful of constants and four pure functions**. That is not
 an accident or a stage it will grow out of; it is the specification. If a change
 here needs a paragraph to justify its size, it belongs in a consumer.
 
+**Read this with the workspace's `AGENTS.md`.** This file is what is specific to
+g2a-protocol. The rules that span the train live one level up, in
+[`dev-agents`](https://github.com/dynamicagents/dev-agents/blob/main/AGENTS.md),
+the workspace these repositories are submodules of: where a change goes, how a
+release reaches npm, how a pull request and an issue are handled, and the house
+rules for prose and comments. Consult it as the general reference rather than
+assuming this file is all of it, because a session started inside this repository
+may never be shown it: each submodule is its own repository root.
+
 `g2a` is _gatekeeper-to-agent_: agents never call each other directly, so every
 call leaving an agent crosses a gatekeeper and stays observable to a human.
 Subagents run inside an agent's own boundary and are not this protocol. The
