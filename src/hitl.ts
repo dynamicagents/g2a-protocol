@@ -59,8 +59,12 @@ export const HITL_TIMEOUT_TYPE = "https://dynamicagents.dev/hitl/timeout";
  * What one question asks for: a pick among options (`choice`), words
  * (`text`), or a yes or no on something to look at first (`approval`).
  *
- * A tuple as well as a type, so a reader can build its validator's enum from the
- * same list the type is derived from, rather than spelling the values again.
+ * A tuple as well as a type so a consumer can drive its conformance coverage
+ * from it: the gatekeeper's HITL contract spec maps over this list to build one
+ * question of every kind, so a kind added here is exercised there on its next
+ * install, with no edit to that spec. It is not a validator's enum and cannot
+ * be one: each kind carries its own fields, so a side reading a question
+ * discriminates on `kind` rather than checking it against a flat list.
  */
 export const HITL_QUESTION_KINDS = ["choice", "text", "approval"] as const;
 

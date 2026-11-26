@@ -1,8 +1,8 @@
 # AGENTS.md — working in `g2a-protocol`
 
-This package is **a handful of constants and four pure functions**. That is not
-an accident or a stage it will grow out of; it is the specification. If a change
-here needs a paragraph to justify its size, it belongs in a consumer.
+This package is **a handful of constants and pure functions, and nothing else**.
+That is not an accident or a stage it will grow out of; it is the specification.
+If a change here needs a paragraph to justify its size, it belongs in a consumer.
 
 **Read this with the workspace's `AGENTS.md`.** This file is what is specific to
 g2a-protocol. The rules that span the train live one level up, in
